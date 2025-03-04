@@ -24,10 +24,11 @@ def fetch_price_history(token_id ="sonic-3",currency="usd", days=1):
         return None
 
 
-def calculate_volatility(prices):
+def calculate_volatility():
+    prices = fetch_price_history()
     returns = np.diff(prices) / prices[:-1] 
     volatility = np.std(returns) * 100  
     net_direction = np.mean(returns) * 100
     return volatility,net_direction
-
-#print(calculate_volatility(fetch_price_history()))
+a,b = calculate_volatility()
+print(f"Volatility: {a}%, Net Direction: {b}%")  # Output

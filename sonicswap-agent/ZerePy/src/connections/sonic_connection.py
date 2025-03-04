@@ -9,6 +9,7 @@ from web3.middleware import geth_poa_middleware
 from src.constants.abi import ERC20_ABI
 from src.connections.base_connection import BaseConnection, Action, ActionParameter
 from src.constants.networks import SONIC_NETWORKS
+from src.helpers.coingecko import token_pair_price
 
 logger = logging.getLogger("connections.sonic_connection")
 
@@ -138,6 +139,7 @@ class SonicConnection(BaseConnection):
                     ActionParameter("token_in", True, str, "Input token address"),
                     ActionParameter("token_out", True, str, "Output token address"),
                     ActionParameter("amount", True, float, "Amount to swap"),
+                    ActionParameter("volatility_rate", False, float, "Optional volatility_rate percentage"), #changed
                     ActionParameter("slippage", False, float, "Max slippage percentage")
                 ],
                 description="Swap tokens"
@@ -221,9 +223,8 @@ class SonicConnection(BaseConnection):
     def transfer(self, to_address: str, amount: float, token_address: Optional[str] = None) -> str:
         """Transfer $S or tokens to an address"""
         print("At Sonic_connection")
-        logger.info(f"Type of amount: {type(amount)}")
-
-        logger.info(f"Type of to_address: {type(to_address)}")
+        logger.info(f"Type of amount: {(amount)}")
+       
 
 
         try:
@@ -377,69 +378,75 @@ class SonicConnection(BaseConnection):
         except Exception as e:
             logger.error(f"Approval failed: {e}")
             raise
-
-    def swap(self, token_in: str, token_out: str, amount: float, slippage: float = 0.5) -> str:
+#changed
+    def swap(self, token_in: str, token_out: str, amount: float, volatility_rate: float = 0.0,slippage: float = 0.5) -> str:
         """Execute a token swap using the KyberSwap router"""
+        
         try:
             private_key = os.getenv('SONIC_PRIVATE_KEY')
             account = self._web3.eth.account.from_key(private_key)
+            token_volatility,indicator = token_pair_price.calculate_volatility()
+            if token_volatility >= volatility_rate and indicator <0:
+            
 
-            # Check token balance before proceeding
-            current_balance = self.get_balance(
-                address=account.address,
-                token_address=None if token_in.lower() == self.NATIVE_TOKEN.lower() else token_in
-            )
-            
-            if current_balance < amount:
-                raise ValueError(f"Insufficient balance. Required: {amount}, Available: {current_balance}")
+                # Check token balance before proceeding
+                current_balance = self.get_balance(
+                    address=account.address,
+                    token_address=None if token_in.lower() == self.NATIVE_TOKEN.lower() else token_in
+                )
                 
-            # Get optimal swap route
-            route_data = self._get_swap_route(token_in, token_out, amount)
-            
-            # Get encoded swap data
-            encoded_data = self._get_encoded_swap_data(route_data["routeSummary"], slippage)
-            
-            # Get router address from route data
-            router_address = route_data["routerAddress"]
-            
-            # Handle token approval if not using native token
-            if token_in.lower() != self.NATIVE_TOKEN.lower():
-                if token_in.lower() == "0x039e2fb66102314ce7b64ce5ce3e5183bc94ad38".lower():  # $S token
-                    amount_raw = self._web3.to_wei(amount, 'ether')
-                else:
-                    token_contract = self._web3.eth.contract(
-                        address=Web3.to_checksum_address(token_in),
-                        abi=self.ERC20_ABI
-                    )
-                    decimals = token_contract.functions.decimals().call()
-                    amount_raw = int(amount * (10 ** decimals))
-                self._handle_token_approval(token_in, router_address, amount_raw)
-            
-            # Prepare transaction
-            tx = {
-                'from': account.address,
-                'to': Web3.to_checksum_address(router_address),
-                'data': encoded_data,
-                'nonce': self._web3.eth.get_transaction_count(account.address),
-                'gasPrice': self._web3.eth.gas_price,
-                'chainId': self._web3.eth.chain_id,
-                'value': self._web3.to_wei(amount, 'ether') if token_in.lower() == self.NATIVE_TOKEN.lower() else 0
-            }
-            
-            # Estimate gas
-            try:
-                tx['gas'] = self._web3.eth.estimate_gas(tx)
-            except Exception as e:
-                logger.warning(f"Gas estimation failed: {e}, using default gas limit")
-                tx['gas'] = 500000  # Default gas limit
-            
-            # Sign and send transaction
-            signed_tx = account.sign_transaction(tx)
-            tx_hash = self._web3.eth.send_raw_transaction(signed_tx.rawTransaction)
-            
-            # Log and return explorer link immediately
-            tx_link = self._get_explorer_link(tx_hash.hex())
-            return f"🔄 Swap transaction sent: {tx_link}"
+                if current_balance < amount:
+                    raise ValueError(f"Insufficient balance. Required: {amount}, Available: {current_balance}")
+                    
+                # Get optimal swap route
+                route_data = self._get_swap_route(token_in, token_out, amount)
+                
+                # Get encoded swap data
+                encoded_data = self._get_encoded_swap_data(route_data["routeSummary"], slippage)
+                
+                # Get router address from route data
+                router_address = route_data["routerAddress"]
+                
+                # Handle token approval if not using native token
+                if token_in.lower() != self.NATIVE_TOKEN.lower():
+                    if token_in.lower() == "0x039e2fb66102314ce7b64ce5ce3e5183bc94ad38".lower():  # $S token
+                        amount_raw = self._web3.to_wei(amount, 'ether')
+                    else:
+                        token_contract = self._web3.eth.contract(
+                            address=Web3.to_checksum_address(token_in),
+                            abi=self.ERC20_ABI
+                        )
+                        decimals = token_contract.functions.decimals().call()
+                        amount_raw = int(amount * (10 ** decimals))
+                    self._handle_token_approval(token_in, router_address, amount_raw)
+                
+                # Prepare transaction
+                tx = {
+                    'from': account.address,
+                    'to': Web3.to_checksum_address(router_address),
+                    'data': encoded_data,
+                    'nonce': self._web3.eth.get_transaction_count(account.address),
+                    'gasPrice': self._web3.eth.gas_price,
+                    'chainId': self._web3.eth.chain_id,
+                    'value': self._web3.to_wei(amount, 'ether') if token_in.lower() == self.NATIVE_TOKEN.lower() else 0
+                }
+                
+                # Estimate gas
+                try:
+                    tx['gas'] = self._web3.eth.estimate_gas(tx)
+                except Exception as e:
+                    logger.warning(f"Gas estimation failed: {e}, using default gas limit")
+                    tx['gas'] = 500000  # Default gas limit
+                
+                # Sign and send transaction
+                signed_tx = account.sign_transaction(tx)
+                tx_hash = self._web3.eth.send_raw_transaction(signed_tx.rawTransaction)
+                
+                # Log and return explorer link immediately
+                tx_link = self._get_explorer_link(tx_hash.hex())
+                return f"🔄 Swap transaction sent: {tx_link}"
+            else:
+                return  f"Token stil stable"
                 
         except Exception as e:
             logger.error(f"Swap failed: {e}")

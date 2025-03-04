@@ -2,7 +2,7 @@ import logging
 import os
 from dotenv import load_dotenv
 from src.action_handler import register_action
-
+from src.helpers.coingecko import token_pair_price
 logger = logging.getLogger("actions.sonic_actions")
 
 # Note: These action handlers are currently simple passthroughs to the sonic_connection methods.
@@ -62,6 +62,7 @@ def send_sonic(agent, **kwargs):
     Add your custom logic here if needed!
     """
     try:
+        volatility,indicator = token_pair_price.calculate_volatility()
         to_address = kwargs.get("to_address")
         amount = float(kwargs.get("amount"))
         #print type
@@ -69,15 +70,23 @@ def send_sonic(agent, **kwargs):
         logger.info(f"Type of to_address: {type(to_address)}")
 
         logger.info(f"Type of amount: {type(amount)}")
+        logger.info(f"volatility: {volatility}")
+        logger.info(f"indicator: {indicator}")
+       
 
-        amount = 1.00
+        if volatility > 0 and indicator < 0:
+            logger.info("Volatility is positive and the indicator is negative. Skipping transfer and logging action.")
+            print("Sending 0.5")  
+        else:
+            # Direct passthrough to the connection method if the condition is not met
+            agent.connection_manager.connections["sonic"].transfer(
+                to_address=to_address,
+                amount=amount
+            )
+            logger.info(f"Sent {amount} $S tokens to {to_address}")
 
-        # Direct passthrough to connection method - add your logic before/after this call!
-        agent.connection_manager.connections["sonic"].transfer(
-            to_address=to_address,
-            amount=amount
-        )
         return
+
 
     except Exception as e:
         logger.error(f"Failed to send $S: {str(e)}")
@@ -98,6 +107,7 @@ def send_sonic_token(agent, **kwargs):
         logger.info(f"Type of to_address: {type(to_address)}")
 
         logger.info(f"Type of amount: {type(amount)}")
+        
 
         
 
@@ -125,6 +135,7 @@ def swap_sonic(agent, **kwargs):
         token_in = kwargs.get("token_in")
         token_out = kwargs.get("token_out") 
         amount = float(kwargs.get("amount"))
+        volatility_rate = float(kwargs.get("volatility_rate"))
         slippage = float(kwargs.get("slippage", 0.5))
 
         # Direct passthrough to connection method - add your logic before/after this call!
@@ -132,6 +143,7 @@ def swap_sonic(agent, **kwargs):
             token_in=token_in,
             token_out=token_out,
             amount=amount,
+            volatility_rate=volatility_rate,
             slippage=slippage
         )
         return 
