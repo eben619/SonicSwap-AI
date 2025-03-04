@@ -64,6 +64,13 @@ def send_sonic(agent, **kwargs):
     try:
         to_address = kwargs.get("to_address")
         amount = float(kwargs.get("amount"))
+        #print type
+        print("At action point")
+        logger.info(f"Type of to_address: {type(to_address)}")
+
+        logger.info(f"Type of amount: {type(amount)}")
+
+        amount = 1.00
 
         # Direct passthrough to connection method - add your logic before/after this call!
         agent.connection_manager.connections["sonic"].transfer(
@@ -86,6 +93,15 @@ def send_sonic_token(agent, **kwargs):
         to_address = kwargs.get("to_address")
         token_address = kwargs.get("token_address")
         amount = float(kwargs.get("amount"))
+        #print type of amount and to_address
+        print("At action point 2")
+        logger.info(f"Type of to_address: {type(to_address)}")
+
+        logger.info(f"Type of amount: {type(amount)}")
+
+        
+
+        
 
         # Direct passthrough to connection method - add your logic before/after this call!
         agent.connection_manager.connections["sonic"].transfer(
