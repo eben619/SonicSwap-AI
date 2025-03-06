@@ -54,4 +54,33 @@ const Load_agent = async(name:string)=>{
 
 }
 
-export {Get_server_Status,List_agents,Sonic_Swap_url,Load_agent}
+interface AgentAction{
+    action: string;
+    connection:string;
+    params:string[];
+}
+
+const Agent_Action = async({action,connection,params}:AgentAction)=>{
+    try{
+        const response = await fetch("/api/agent_action", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                connection: connection,
+                action: action,
+                params: params 
+            })
+        });
+        if(!response.ok){
+            console.error("Server responded with an error:", response.status);
+            return "Agent_down";
+        }
+    }catch(error){
+        console.error("Error fetching agent action:", error);
+        return "Retry again";
+    }
+}
+
+export {Get_server_Status,List_agents,Sonic_Swap_url,Load_agent,Agent_Action}
