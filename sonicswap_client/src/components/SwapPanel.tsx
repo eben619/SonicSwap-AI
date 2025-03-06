@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   CustomCard, 
   CustomCardHeader, 
@@ -16,6 +16,7 @@ import { Token, SwapConfig } from '@/lib/types';
 import TokenSelector from './TokenSelector';
 import VolatilityThresholdSlider from './VolatilitySlider';
 import ActiveSwapsList from './ActiveSwapList';
+import { Get_server_Status } from '@/constant/agent_endpoint';
 
 const getTokenColor = (symbol: string): string => {
   const hash = symbol.split('').reduce((acc, char) => {
@@ -38,6 +39,7 @@ const SwapPanel: React.FC = () => {
   const [targetToken, setTargetToken] = useState<Token | null>(null);
   const [volatilityThreshold, setVolatilityThreshold] = useState<number>(10);
   const [isActiveSwaps, setIsActiveSwaps] = useState<SwapConfig[]>(swapConfigs.filter(s => s.isActive));
+  const [serverStatus,setServerstatus]= useState<number | null |string>()
   
   const volatileTokens = tokens.filter(t => t.type === 'volatile');
   const stableTokens = tokens.filter(t => t.type === 'stable');
@@ -84,6 +86,23 @@ const SwapPanel: React.FC = () => {
     setTargetToken(null);
     setVolatilityThreshold(10);
   };
+
+  useEffect(()=>{
+    const fetchServerStatus = async () => {
+      try {
+        const result = await Get_server_Status()
+        console.log("results",result)
+        
+          setServerstatus(result)
+       
+      }catch (error){
+        console.error(error)
+
+
+      }}
+      fetchServerStatus()
+
+  })
   
   return (
     <div className="space-y-4 animate-fade-in pt-19" style={{ animationDelay: '0.1s' }}>
