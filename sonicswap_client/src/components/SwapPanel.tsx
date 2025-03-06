@@ -17,7 +17,7 @@ import TokenSelector from './TokenSelector';
 import VolatilityThresholdSlider from './VolatilitySlider';
 import ActiveSwapsList from './ActiveSwapList';
 import { Get_server_Status } from '@/constant/agent_endpoint';
-import { List_agents } from '@/constant/agent_endpoint';
+import { List_agents,Start_Agent,Stop_Agent,Load_agent,Agent_Action,List_Actions } from '@/constant/agent_endpoint';
 
 const getTokenColor = (symbol: string): string => {
   const hash = symbol.split('').reduce((acc, char) => {
@@ -91,10 +91,20 @@ const SwapPanel: React.FC = () => {
   useEffect(()=>{
     const fetchServerStatus = async () => {
       try {
+        
+        const result = await Get_server_Status()
+        // console.log("the server status is",result)
+        // console.log("results",result)
         // const agents = await List_agents()
         // console.log("agents",agents.agents)
-        const result = await Get_server_Status()
-        console.log("results",result)
+
+        const loaded_Agent = await Load_agent("sonic-swap")
+        console.log("loaded agent",loaded_Agent?.agent)
+        // const List_Agent_Actions = await List_Actions("sonic")
+        // console.log("list agent actions",List_Agent_Actions)
+       //const resultForAction = await Agent_Action({action:"swap",connection:"sonic",params:[0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38,0x29219dd400f2Bf60E5a23d13Be72B486D4038894,0.001,0.0001]})
+       //console.log("result for action",resultForAction)
+
         
           setServerstatus(result)
        

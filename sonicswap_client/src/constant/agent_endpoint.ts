@@ -36,10 +36,70 @@ const List_agents = async()=>{
     }
 }
 
-const Load_agent = async(name:string)=>{
+const Load_agent = async (name: string) => {
+    try {
+        const response = await fetch("/api/load_agent", {  
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ name }) 
+        });
+        console.log("Errror for loading agent", response)
+
+        if (!response.ok) {
+            console.error("Server responded with an error:", response.statusText);
+            return "Agent_down";
+        }
+
+        const result = await response.json();
+        return result.data;
+    } catch (err) {
+        console.error("Error loading agent:", err);
+        return "Retry again";
+    }
+};
+
+
+const List_Actions = async(name:string)=>{
     try{
 
-        const response = await fetch(`/api/load_agent/${encodeURIComponent(name)}`);
+        const response = await fetch(`/api/list_actions`);
+        if(!response.ok){
+            console.error("Server responded with an error:", response.status);
+            return "Agent_down";
+            }
+            const result = await response.json()
+            return result.data
+    }catch(err){
+        console.error("Error loading agent:", err);
+        return "Retry again";
+    }
+   
+
+}
+const Start_Agent = async()=>{
+    try{
+
+        const response = await fetch(`/api/agent_start`);
+        if(!response.ok){
+            console.error("Server responded with an error:", response.status);
+            return "Agent_down";
+            }
+            const result = await response.json()
+            return result.data
+    }catch(err){
+        console.error("Error loading agent:", err);
+        return "Retry again";
+    }
+   
+
+}
+
+const Stop_Agent = async()=>{
+    try{
+
+        const response = await fetch(`/api/agent_stop`);
         if(!response.ok){
             console.error("Server responded with an error:", response.status);
             return "Agent_down";
@@ -57,7 +117,7 @@ const Load_agent = async(name:string)=>{
 interface AgentAction{
     action: string;
     connection:string;
-    params:string[];
+    params:any[];
 }
 
 const Agent_Action = async({action,connection,params}:AgentAction)=>{
@@ -83,4 +143,4 @@ const Agent_Action = async({action,connection,params}:AgentAction)=>{
     }
 }
 
-export {Get_server_Status,List_agents,Sonic_Swap_url,Load_agent,Agent_Action}
+export {Get_server_Status,List_agents,Sonic_Swap_url,Load_agent,Agent_Action,Start_Agent,Stop_Agent,List_Actions}

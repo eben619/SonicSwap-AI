@@ -3,26 +3,15 @@ import { Sonic_Swap_url } from "@/constant/agent_endpoint";
 
 
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
     
-    const { name } = await req.json();
-    //check if name is present
-    if (!name) {
-      return new Response(JSON.stringify({ error: "Name is required" }), {
-        status: 400,
-        headers: {
-          "Content-Type": "application/json",
-          },
-    })}
-          
 
-
-    const url = `${Sonic_Swap_url}agents/${name}/load`;
+    const url = `${Sonic_Swap_url}connections/Sonic/actions`;
     
 
     const response = await fetch(url, {
-      method: "POST",
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
@@ -34,7 +23,8 @@ export async function POST(req: NextRequest) {
     }
 
     const responseData = await response.json();
-    return NextResponse.json( { status: 200, data:responseData });
+    console.log("the response is data",responseData)
+    return NextResponse.json({ status: 200,data:responseData });
   } catch (error: any) {
     console.error("Error adding transaction:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
