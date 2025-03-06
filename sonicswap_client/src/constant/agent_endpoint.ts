@@ -20,4 +20,20 @@ const Get_server_Status = async (): Promise<number | null |string> => {
 };
 
 
-export {Get_server_Status,Sonic_Swap_url}
+const List_agents = async()=>{
+    try{
+        const response = await fetch("/api/list_agents");
+        if(!response.ok){
+            console.error("Server responded with an error:", response.status);
+            return "Agent_down";
+            }
+            const result = await response.json()
+        return result.data
+    }catch(err){
+        console.error("Error fetching agents:", err);
+        return "Retry again";
+
+    }
+}
+
+export {Get_server_Status,List_agents,Sonic_Swap_url}

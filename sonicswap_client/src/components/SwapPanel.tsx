@@ -17,6 +17,7 @@ import TokenSelector from './TokenSelector';
 import VolatilityThresholdSlider from './VolatilitySlider';
 import ActiveSwapsList from './ActiveSwapList';
 import { Get_server_Status } from '@/constant/agent_endpoint';
+import { List_agents } from '@/constant/agent_endpoint';
 
 const getTokenColor = (symbol: string): string => {
   const hash = symbol.split('').reduce((acc, char) => {
@@ -90,6 +91,8 @@ const SwapPanel: React.FC = () => {
   useEffect(()=>{
     const fetchServerStatus = async () => {
       try {
+        // const agents = await List_agents()
+        // console.log("agents",agents.agents)
         const result = await Get_server_Status()
         console.log("results",result)
         
