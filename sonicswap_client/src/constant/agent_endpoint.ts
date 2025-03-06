@@ -36,4 +36,22 @@ const List_agents = async()=>{
     }
 }
 
-export {Get_server_Status,List_agents,Sonic_Swap_url}
+const Load_agent = async(name:string)=>{
+    try{
+
+        const response = await fetch(`/api/load_agent/${encodeURIComponent(name)}`);
+        if(!response.ok){
+            console.error("Server responded with an error:", response.status);
+            return "Agent_down";
+            }
+            const result = await response.json()
+            return result.data
+    }catch(err){
+        console.error("Error loading agent:", err);
+        return "Retry again";
+    }
+   
+
+}
+
+export {Get_server_Status,List_agents,Sonic_Swap_url,Load_agent}
