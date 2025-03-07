@@ -117,7 +117,7 @@ const Stop_Agent = async()=>{
 interface AgentAction{
     action: string;
     connection:string;
-    params:any[];
+    params?:any[];
 }
 
 const Agent_Action = async({action,connection,params}:AgentAction)=>{
@@ -133,10 +133,13 @@ const Agent_Action = async({action,connection,params}:AgentAction)=>{
                 params: params 
             })
         });
+        console.log("Response from action", response)
         if(!response.ok){
             console.error("Server responded with an error:", response.status);
             return "Agent_down";
         }
+        const result = await response.json()
+        return result.data
     }catch(error){
         console.error("Error fetching agent action:", error);
         return "Retry again";

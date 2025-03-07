@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     }
 
     const responseData = await response.json();
-    return NextResponse.json(responseData, { status: 200 });
+    return NextResponse.json({ status: 200 ,data:responseData});
   } catch (error: any) {
     console.error("Error adding transaction:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });

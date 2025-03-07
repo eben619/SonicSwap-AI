@@ -44,7 +44,7 @@ const SwapPanel: React.FC = () => {
   
   const volatileTokens = tokens.filter(t => t.type === 'volatile');
   const stableTokens = tokens.filter(t => t.type === 'stable');
-  
+  const swaptokensIn = []
   const handleCreateSwap = () => {
     if (!sourceToken || !targetToken) {
       toast.error('Please select both source and target tokens');
@@ -93,7 +93,7 @@ const SwapPanel: React.FC = () => {
       try {
         
         const result = await Get_server_Status()
-        // console.log("the server status is",result)
+         console.log("the server status is",result)
         // console.log("results",result)
         // const agents = await List_agents()
         // console.log("agents",agents.agents)
@@ -102,8 +102,12 @@ const SwapPanel: React.FC = () => {
         console.log("loaded agent",loaded_Agent?.agent)
         // const List_Agent_Actions = await List_Actions("sonic")
         // console.log("list agent actions",List_Agent_Actions)
-       //const resultForAction = await Agent_Action({action:"swap",connection:"sonic",params:[0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38,0x29219dd400f2Bf60E5a23d13Be72B486D4038894,0.001,0.0001]})
-       //console.log("result for action",resultForAction)
+       const resultForAction = await Agent_Action({action:"get-balance",connection:"sonic",params:["0x00A1A59A636858BD18b577Bb3f9Ee368Db9fcE66"]})
+       console.log("result for action",resultForAction.result)
+       const resultForAction2 = await Agent_Action({action:"transfer",connection:"sonic",params:["0x65E28C9C4Ef1a756d8df1c507b7A84eFcF606fd4","1.00"]})
+       console.log("result for action 22",resultForAction2.result)
+      // const resultForActionSwap = await Agent_Action({action:"swap",connection:"sonic",params:["0x65E28C9C4Ef1a756d8df1c507b7A84eFcF606fd4","1.00"]})
+      // console.log("result for action swap",resultForActionSwap.result)
 
         
           setServerstatus(result)

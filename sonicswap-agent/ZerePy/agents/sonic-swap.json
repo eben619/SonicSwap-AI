@@ -36,7 +36,7 @@
        },
        {
          "name": "sonic",
-         "network": "mainnet"
+         "network": "testnet"
        },
        {
         "name": "evm",
