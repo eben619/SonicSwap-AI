@@ -17,7 +17,7 @@ import TokenSelector from './TokenSelector';
 import VolatilityThresholdSlider from './VolatilitySlider';
 import ActiveSwapsList from './ActiveSwapList';
 import { Get_server_Status } from '@/constant/agent_endpoint';
-import { List_agents,Start_Agent,Stop_Agent,Load_agent,Agent_Action,List_Actions } from '@/constant/agent_endpoint';
+import { List_agents,Start_Agent,Stop_Agent,Load_agent,Agent_Action,List_Actions,fetch_token_price } from '@/constant/agent_endpoint';
 
 const getTokenColor = (symbol: string): string => {
   const hash = symbol.split('').reduce((acc, char) => {
@@ -92,25 +92,28 @@ const SwapPanel: React.FC = () => {
     const fetchServerStatus = async () => {
       try {
         
-        const result = await Get_server_Status()
-         console.log("the server status is",result)
+        // const result = await Get_server_Status()
+        //  console.log("the server status is",result)
         // console.log("results",result)
         // const agents = await List_agents()
         // console.log("agents",agents.agents)
 
-        const loaded_Agent = await Load_agent("sonic-swap")
-        console.log("loaded agent",loaded_Agent?.agent)
+        // const loaded_Agent = await Load_agent("sonic-swap")
+        // console.log("loaded agent",loaded_Agent?.agent)
         // const List_Agent_Actions = await List_Actions("sonic")
         // console.log("list agent actions",List_Agent_Actions)
-       const resultForAction = await Agent_Action({action:"get-balance",connection:"sonic",params:["0x00A1A59A636858BD18b577Bb3f9Ee368Db9fcE66"]})
-       console.log("result for action",resultForAction.result)
-       const resultForAction2 = await Agent_Action({action:"transfer",connection:"sonic",params:["0x65E28C9C4Ef1a756d8df1c507b7A84eFcF606fd4","1.00"]})
-       console.log("result for action 22",resultForAction2.result)
+      //  const resultForAction = await Agent_Action({action:"get-balance",connection:"sonic",params:["0x00A1A59A636858BD18b577Bb3f9Ee368Db9fcE66"]})
+      //  console.log("result for action",resultForAction.result)
+      //  const resultForAction2 = await Agent_Action({action:"transfer",connection:"sonic",params:["0x65E28C9C4Ef1a756d8df1c507b7A84eFcF606fd4","1.00"]})
+      //  console.log("result for action 22",resultForAction2.result)
       // const resultForActionSwap = await Agent_Action({action:"swap",connection:"sonic",params:["0x65E28C9C4Ef1a756d8df1c507b7A84eFcF606fd4","1.00"]})
       // console.log("result for action swap",resultForActionSwap.result)
 
         
-          setServerstatus(result)
+          //setServerstatus(result)
+          const result = await fetch_token_price("sonic-3")
+          //console.log("token price",result.market_data.current_price.usd)
+          console.log("token Prices",result)
        
       }catch (error){
         console.error(error)

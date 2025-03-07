@@ -78,6 +78,21 @@ const List_Actions = async(name:string)=>{
    
 
 }
+const fetch_token_price = async(token_id:string)=>{
+    try{
+        const response = await fetch(`/api/token_price_feed?token_id=${encodeURIComponent(token_id)}`);
+        if(!response.ok){
+            console.error("Server responded with an error:", response.status);
+            return "failed to fetch price";
+            }
+            const result = await response.json()
+            return result.data
+            }catch(err){
+                console.error("Error loading agent:", err);
+                return "Retry again";
+                }
+}
+
 const Start_Agent = async()=>{
     try{
 
@@ -146,4 +161,4 @@ const Agent_Action = async({action,connection,params}:AgentAction)=>{
     }
 }
 
-export {Get_server_Status,List_agents,Sonic_Swap_url,Load_agent,Agent_Action,Start_Agent,Stop_Agent,List_Actions}
+export {Get_server_Status,List_agents,Sonic_Swap_url,Load_agent,Agent_Action,Start_Agent,Stop_Agent,List_Actions,fetch_token_price}
