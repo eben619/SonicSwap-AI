@@ -32,7 +32,7 @@ const ActiveSwapsList: React.FC<ActiveSwapsListProps> = ({
         onClick={() => toggleTab("swaps")}
         className="flex justify-between items-center w-full p-3 bg-gray-100 rounded-lg text-sm font-semibold"
       >
-        Active Swaps & Send Token
+        Active Swaps
         {openTab === "swaps" ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
       </button>
 

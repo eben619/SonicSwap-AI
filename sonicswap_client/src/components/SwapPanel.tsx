@@ -147,7 +147,7 @@ const SwapPanel: React.FC = () => {
           <CustomCard className="h-full">
             <CustomCardHeader>
               <CustomCardTitle className="flex items-center justify-between">
-                <span>Active Swaps</span>
+                <span>Active Swaps & Send Token</span>
                 <Settings2Icon size={16} className="text-muted-foreground" />
               </CustomCardTitle>
             </CustomCardHeader>
