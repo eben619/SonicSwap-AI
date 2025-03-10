@@ -46,8 +46,8 @@ const ActiveSwapsList: React.FC<ActiveSwapsListProps> = ({
             </div>
           ) : (
             swaps.map((swap) => {
-              const sourceTokenColor = getTokenColor(swap.sourceToken.symbol);
-              const targetTokenColor = getTokenColor(swap.targetToken.symbol);
+              const sourceTokenColor = getTokenColor(swap.sourceToken?.symbol);
+              const targetTokenColor = getTokenColor(swap.targetToken?.symbol);
 
               return (
                 <div
@@ -58,19 +58,19 @@ const ActiveSwapsList: React.FC<ActiveSwapsListProps> = ({
                     <div className="flex items-center">
                       <div className="flex -space-x-2">
                         <div className={cn("w-6 h-6 rounded-full flex items-center justify-center border", sourceTokenColor)}>
-                          <span className="text-xs text-white">{swap.sourceToken.symbol[0]}</span>
+                          <span className="text-xs text-white">{swap?.sourceToken?.symbol[0]}</span>
                         </div>
                         <div className={cn("w-6 h-6 rounded-full flex items-center justify-center border", targetTokenColor)}>
-                          <span className="text-xs text-white">{swap.targetToken.symbol[0]}</span>
+                          <span className="text-xs text-white">{swap?.targetToken.symbol[0]}</span>
                         </div>
                       </div>
                       <span className="text-sm font-medium ml-2">
-                        {swap.sourceToken.symbol} → {swap.targetToken.symbol}
+                        {swap.sourceToken?.symbol} → {swap?.targetToken?.symbol}
                       </span>
                     </div>
 
                     <Switch
-                      checked={swap.isActive}
+                      checked={swap?.isActive}
                       onCheckedChange={() => onToggleSwap(swap.id)}
                     />
                   </div>

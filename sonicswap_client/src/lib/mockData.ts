@@ -8,35 +8,38 @@ export const tokens: Token[] = [
     name: 'Sonic',
     type: 'volatile',
     price: 0.0478,
+    address: "0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38",
     priceChange24h: 5.8,
     volume24h: 12450000,
     logoUrl: 'https://via.placeholder.com/32'
   },
   {
-    id: 'hey-anon',
-    symbol: 'HEY',
+    id: 'wrapped ether',
+    symbol: 'WETH',
     name: 'Hey Anon',
     type: 'volatile',
+    address:"0x50c42dEAcD8Fc9773493ED674b675bE577f2634b",
     price: 0.0925,
     priceChange24h: -2.3,
     volume24h: 8760000,
     logoUrl: 'https://via.placeholder.com/32'
   },
-  {
-    id: 'pendle',
-    symbol: 'PENDLE',
-    name: 'Pendle',
-    type: 'volatile',
-    price: 3.42,
-    priceChange24h: 12.5,
-    volume24h: 24680000,
-    logoUrl: 'https://via.placeholder.com/32'
-  },
+  // {
+  //   id: 'pendle',
+  //   symbol: 'PENDLE',
+  //   name: 'Pendle',
+  //   type: 'volatile',
+  //   price: 3.42,
+  //   priceChange24h: 12.5,
+  //   volume24h: 24680000,
+  //   logoUrl: 'https://via.placeholder.com/32'
+  // },
   {
     id: 'usdt',
     symbol: 'USDT',
     name: 'Tether',
     type: 'stable',
+    address:"0x6047828dc181963ba44974801ff68e538da5eaf9",
     price: 1.002,
     priceChange24h: 0.1,
     volume24h: 98760000,
@@ -47,21 +50,22 @@ export const tokens: Token[] = [
     symbol: 'USDC',
     name: 'USD Coin',
     type: 'stable',
+    address:"0x29219dd400f2Bf60E5a23d13Be72B486D4038894",
     price: 0.999,
     priceChange24h: -0.2,
     volume24h: 78450000,
     logoUrl: 'https://via.placeholder.com/32'
   },
-  {
-    id: 'scusd',
-    symbol: 'scUSD',
-    name: 'Stablecoin USD',
-    type: 'stable',
-    price: 1.004,
-    priceChange24h: 0.3,
-    volume24h: 45670000,
-    logoUrl: 'https://via.placeholder.com/32'
-  }
+  // {
+  //   id: 'scusd',
+  //   symbol: 'scUSD',
+  //   name: 'Stablecoin USD',
+  //   type: 'stable',
+  //   price: 1.004,
+  //   priceChange24h: 0.3,
+  //   volume24h: 45670000,
+  //   logoUrl: 'https://via.placeholder.com/32'
+  // }
 ];
 
 export const tokenPairs: TokenPair[] = [

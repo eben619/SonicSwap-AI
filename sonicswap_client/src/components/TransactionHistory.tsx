@@ -53,27 +53,27 @@ const TransactionHistory: React.FC = () => {
                         <div className="flex items-center">
                           <div className="flex -space-x-2 mr-2">
                             <div className="w-6 h-6 rounded-full bg-amber/10 flex items-center justify-center z-10 border border-border">
-                              <span className="text-[10px] font-medium">{tx.sourceToken.symbol}</span>
+                              <span className="text-[10px] font-medium">{tx.sourceToken?.symbol}</span>
                             </div>
                             <div className="w-6 h-6 rounded-full bg-navy/10 flex items-center justify-center border border-border">
-                              <span className="text-[10px] font-medium">{tx.targetToken.symbol}</span>
+                              <span className="text-[10px] font-medium">{tx.targetToken?.symbol}</span>
                             </div>
                           </div>
                           <div className="flex items-center text-sm">
-                            <span className="font-medium">{tx.sourceToken.symbol}</span>
+                            <span className="font-medium">{tx.sourceToken?.symbol}</span>
                             <ArrowRightIcon size={12} className="mx-1 text-muted-foreground" />
-                            <span className="font-medium">{tx.targetToken.symbol}</span>
+                            <span className="font-medium">{tx.targetToken?.symbol}</span>
                           </div>
                         </div>
                       </td>
                       <td className="px-4 py-3">
                         <span className="text-sm">
-                          {tx.sourceAmount.toLocaleString()} {tx.sourceToken.symbol}
+                          {tx.sourceAmount?.toLocaleString()} {tx.sourceToken?.symbol}
                         </span>
                       </td>
                       <td className="px-4 py-3">
                         <span className="text-sm">
-                          {tx.targetAmount.toLocaleString()} {tx.targetToken.symbol}
+                          {tx.targetAmount?.toLocaleString()} {tx.targetToken?.symbol}
                         </span>
                       </td>
                       <td className="px-4 py-3">

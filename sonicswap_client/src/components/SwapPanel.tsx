@@ -38,7 +38,7 @@ import { List_agents,Start_Agent,Stop_Agent,Load_agent,Agent_Action,List_Actions
 // import ActiveSwapsList from "./ActiveSwapList";
 
 const getTokenColor = (symbol: string): string => {
-  const hash = symbol.split("").reduce((acc, char) => {
+  const hash = symbol?.split("").reduce((acc, char) => {
     return char.charCodeAt(0) + ((acc << 5) - acc);
   }, 0);
 
@@ -67,6 +67,7 @@ const SwapPanel: React.FC = () => {
   const [volatilityThreshold, setVolatilityThreshold] = useState<number>(10);
   const [isActiveSwaps, setIsActiveSwaps] = useState<SwapConfig[]>(swapConfigs.filter(s => s.isActive));
   const [serverStatus,setServerstatus]= useState<number | null |string>()
+  const [agentStart,setStartAgent] = useState<boolean>(false)
   
   // const volatileTokens = tokens.filter(t => t.type === 'volatile');
   // const stableTokens = tokens.filter(t => t.type === 'stable');
@@ -78,28 +79,46 @@ const SwapPanel: React.FC = () => {
   const volatileTokens = tokens.filter((t) => t.type === "volatile");
   const stableTokens = tokens.filter((t) => t.type === "stable");
 
-  const handleCreateSwap = () => {
+  const handleCreateSwap =async () => {
     if (!sourceToken || !targetToken) {
+      
       toast.error("Please select both source and target tokens");
       return;
     }
+      const res = await Agent_Action({action:"swap",connection:"sonic",params:[sourceToken.address,targetToken.address,"0.01",volatilityThreshold.toString()]})
 
-    const newSwap: SwapConfig = {
-      id: `new-${Date.now()}`,
-      sourceToken,
-      targetToken,
-      volatilityThreshold,
-      isActive: true,
-      createdAt: new Date().toISOString(),
-    };
-
-    setIsActiveSwaps((prev) => [...prev, newSwap]);
-    toast.success("New swap configuration added");
-
-    // Reset form
+      console.log("result is sending",res.result)
+      if (res?.status == "success"){
+        alert(`Transaction successful${res.result}`)
+        const newSwap: SwapConfig = {
+          id: `new-${Date.now()}`,
+          sourceToken,
+          targetToken,
+          volatilityThreshold,
+          isActive: true,
+          createdAt: new Date().toISOString(),
+        };
+    
+        setIsActiveSwaps((prev) => [...prev, newSwap]);
+        toast.success("New swap configuration added");
+         // Reset form
     setSourceToken(null);
     setTargetToken(null);
     setVolatilityThreshold(10);
+      }else{
+        alert(`Transaction failed ${res.result}`)
+         // Reset form
+    setSourceToken(null);
+    setTargetToken(null);
+    setVolatilityThreshold(10);
+      }
+
+     // Reset form
+     setSourceToken(null);
+     setTargetToken(null);
+     setVolatilityThreshold(10);
+
+   
   };
 
   const handleToggleSwap = (id: string) => {
@@ -121,6 +140,17 @@ const SwapPanel: React.FC = () => {
     setVolatilityThreshold(10);
   };
 
+  const startAgent = async()=>{
+    const loaded_Agent = await Load_agent("sonic-swap")
+    if (loaded_Agent?.agent == "sonic-swap"){
+      setStartAgent(true)
+    }else{
+      toast.error("failed to start agent")
+    }
+
+
+  }
+
   useEffect(()=>{
     const fetchServerStatus = async () => {
       try {
@@ -131,7 +161,7 @@ const SwapPanel: React.FC = () => {
         // const agents = await List_agents()
         // console.log("agents",agents.agents)
 
-        // const loaded_Agent = await Load_agent("sonic-swap")
+        //const loaded_Agent = await Load_agent("sonic-swap")
         // console.log("loaded agent",loaded_Agent?.agent)
         // const List_Agent_Actions = await List_Actions("sonic")
         // console.log("list agent actions",List_Agent_Actions)
@@ -191,6 +221,12 @@ const SwapPanel: React.FC = () => {
           </CustomCardContent>
 
           <CustomCardFooter className="justify-end">
+            {agentStart?<Button variant="outline" size="sm" className="mr-2 bg-green-600" >
+              Running
+            </Button>:<Button variant="outline" size="sm" className="mr-2 bg-red-600" onClick={startAgent}>
+              StartAgent
+            </Button> }
+          
             <Button variant="outline" size="sm" className="mr-2" onClick={resetForm}>
               Reset
             </Button>

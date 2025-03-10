@@ -4,18 +4,26 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { tokens } from "@/lib/mockData";
 import { Token } from "@/lib/types";
+import { List_agents,Start_Agent,Stop_Agent,Load_agent,Agent_Action,List_Actions,fetch_token_price } from '@/constant/agent_endpoint';
 
 const SendToken: React.FC = () => {
   const [selectedToken, setSelectedToken] = useState<Token | null>(null);
   const [recipient, setRecipient] = useState("");
   const [amount, setAmount] = useState("");
 
-  const handleSend = () => {
+  const handleSend = async() => {
     if (!selectedToken || !recipient || !amount) {
       alert("Please fill in all fields");
       return;
     }
     alert(`Sending ${amount} ${selectedToken.symbol} to ${recipient}`);
+    const res = await Agent_Action({action:"transfer",connection:"sonic",params:[recipient,amount]})
+    console.log("result is sending",res.result)
+    if (res?.status == "success"){
+      alert(`Transaction successful${res.result}`)
+    }else{
+      alert(`Transaction failed ${res.result}`)
+    }
   };
 
   return (

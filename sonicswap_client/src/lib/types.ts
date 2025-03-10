@@ -9,6 +9,7 @@ export interface Token {
   price: number;
   priceChange24h: number;
   volume24h: number;
+  address?:string;
   marketCap?: number;
   logoUrl?: string;
 }
